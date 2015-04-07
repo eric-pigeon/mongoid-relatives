@@ -1,4 +1,4 @@
-# Mongoid::relatives [![Build Status](https://travis-ci.org/xxxpigeonxxx/mongoid-relatives.svg?branch=master)](https://travis-ci.org/xxxpigeonxxx/mongoid-relatives)
+# Mongoid::relatives [![Build Status](https://travis-ci.org/xxxpigeonxxx/mongoid-relatives.svg?branch=master)](https://travis-ci.org/xxxpigeonxxx/mongoid-relatives) [![Code Climate](https://codeclimate.com/github/xxxpigeonxxx/mongoid-relatives/badges/gpa.svg)](https://codeclimate.com/github/xxxpigeonxxx/mongoid-relatives)
 
 TODO: Write a gem description
 
