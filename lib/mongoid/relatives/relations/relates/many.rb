@@ -31,7 +31,20 @@ module Mongoid
             end
 
             def criteria(metadata, object, type = nil)
-              metadata.klass.elem_match(metadata.class_path => {metadata.foreign_key => object})
+              path = metadata.class_path.split(".")
+              current_klass = metadata.klass
+              path_info = []
+
+              path.each do |relation_name|
+                meta = current_klass.relations[relation_name]
+                path_info << { macro: meta.macro, klass: current_klass, relation: relation_name}
+                current_klass = meta.klass
+              end
+              selector = path_info.drop(1).reverse_each.inject({metadata.foreign_key => object}) do |sel, info|
+                info[:klass].elem_match(info[:relation] => sel).selector
+              end
+
+              metadata.klass.elem_match(path.first => selector)
             end
 
             def embedded?
@@ -42,7 +55,7 @@ module Mongoid
               "_id"
             end
 
-            def foreign_key
+            def foreign_key(name)
               "#{name}#{foreign_key_suffix}"
             end
 

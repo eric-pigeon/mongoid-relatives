@@ -1,8 +1,10 @@
+require "mongoid/relations/macros"
+
 module Mongoid
   module Relatives
     module Relations
       module Macros
-        extend ActiveSupport::Concern
+        extend Mongoid::Relations::Macros
 
         module ClassMethods
           def relates_many(name, options = {})
@@ -14,7 +16,16 @@ module Mongoid
               class_path: path.join(".")
             })
             meta = characterize(name, Relates::Many, options)
+            relate_getter(name, meta)
+            meta
+          end
+
+          def associates_to(name, options = {})
+            meta = characterize(name, Relates::In, options)
             relate(name, meta)
+            reference(meta)
+            aliased_fields[name.to_s] = meta.foreign_key
+            touchable(meta)
             meta
           end
 
@@ -28,7 +39,7 @@ module Mongoid
             }).merge(options)
           end
 
-          def relate(name, metadata)
+          def relate_getter(name, metadata)
             self.relations = relations.merge(name.to_s => metadata)
             getter(name, metadata)
           end

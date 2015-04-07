@@ -25,7 +25,7 @@
 #require 'database_cleaner'
 require 'mongoid'
 
-require File.expand_path("../../lib/mongoid/relatives", __FILE__)
+require File.expand_path("../../lib/mongoid-relatives", __FILE__)
 Dir["#{File.dirname(__FILE__)}/app/models/*.rb"].each {|file| require file}
 
 Mongoid.load!(File.expand_path('mongoid.yml', File.dirname(__FILE__)), :test)

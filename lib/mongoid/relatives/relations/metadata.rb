@@ -10,18 +10,50 @@ module Mongoid
         end
 
         def related_klass
-          #TODO will need to be recursive i think
-          klass.relations[class_path].class_name.constantize
+          path = class_path.split(".")
+          last = klass
+          path.each do |relation_name|
+            last = last.relations[relation_name].klass
+          end
+          last
         end
 
         def determine_inverse_relation
-          default = foreign_key_match || related_klass.relations[inverse_klass.name.underscore]
+          default = foreign_key_match || klass.relations[inverse_klass.name.underscore]
           return default.name if default
           names = inverse_relation_candidate_names
           if names.size > 1
             raise Errors::AmbiguousRelationship.new(klass, inverse_klass, name, names)
           end
           names.first
+        end
+
+        def inverse_relation_candidates
+          if class_path
+            path = class_path.split(".")
+            pathed_class = klass
+            path.each do |relation|
+              pathed_class = pathed_class.relations[relation].klass
+            end
+            pathed_class.relations.values.select do |meta|
+              next if meta.name == name
+              (meta.class_name == inverse_class_name) && !meta.forced_nil_inverse?
+            end
+          else
+            relations_metadata.select do |meta|
+              next if meta.name == name
+              if meta.respond_to? "class_path"
+                pathed_class = meta.klass
+                path = meta.class_path.split(".")
+                path.each do |relation|
+                  pathed_class = pathed_class.relations[relation].klass
+                end
+                (pathed_class == inverse_klass) && !meta.forced_nil_inverse?
+              else
+                (meta.class_name == inverse_class_name) && !meta.forced_nil_inverse?
+              end
+            end
+          end
         end
 
         def inspect
