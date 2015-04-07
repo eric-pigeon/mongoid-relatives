@@ -1,4 +1,4 @@
-# Mongoid::relatives
+# Mongoid::relatives [![Build Status](https://travis-ci.org/xxxpigeonxxx/mongoid-relatives.svg?branch=master)](https://travis-ci.org/xxxpigeonxxx/mongoid-relatives)
 
 TODO: Write a gem description
 
