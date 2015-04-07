@@ -16,7 +16,10 @@
 # users commonly want.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
-
+if ENV["CI"]
+  require "coveralls"
+  Coveralls.wear!
+end
 
 
 
