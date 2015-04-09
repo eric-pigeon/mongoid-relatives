@@ -18,16 +18,6 @@ module Mongoid
           last
         end
 
-        def determine_inverse_relation
-          default = foreign_key_match || klass.relations[inverse_klass.name.underscore]
-          return default.name if default
-          names = inverse_relation_candidate_names
-          if names.size > 1
-            raise Errors::AmbiguousRelationship.new(klass, inverse_klass, name, names)
-          end
-          names.first
-        end
-
         def inverse_relation_candidates
           if class_path
             path = class_path.split(".")
