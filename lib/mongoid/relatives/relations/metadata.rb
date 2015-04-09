@@ -1,15 +1,20 @@
 require "mongoid/relations"
 
 module Mongoid
+  module Relations
+    class Metadata
+      def class_path
+        self[:class_path]
+      end
+    end
+  end
+
   module Relatives
     module Relations
       class Metadata < Mongoid::Relations::Metadata
 
-        def class_path
-          self[:class_path]
-        end
-
         def related_klass
+          return inverse_klass if class_path.nil?
           path = class_path.split(".")
           last = klass
           path.each do |relation_name|
