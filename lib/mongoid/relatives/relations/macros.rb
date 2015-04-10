@@ -1,4 +1,5 @@
 require "mongoid/relations/macros"
+require "mongoid/relatives/errors/missing_options"
 
 module Mongoid
   module Relatives
@@ -8,7 +9,11 @@ module Mongoid
 
         module ClassMethods
           def relates_many(name, options = {})
-            # TODO raise exception
+            raise Mongoid::Relatives::Errors::MissingOptions.new(
+              name.to_s,
+              "class_path"
+            ) if options[:class_path].nil?
+            #TODO move parsing to relation
             path = options[:class_path].split(".")
             class_name = path.shift()
             options.merge!({
@@ -36,7 +41,7 @@ module Mongoid
               relation: relation,
               inverse_class_name: self.name,
               name: name
-            }).merge(options)
+            }.merge(options))
           end
 
           def relate_getter(name, metadata)

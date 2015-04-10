@@ -4,6 +4,6 @@ class Product
 
   field :name, type: String
 
-  relates_many :orders,  class_path: 'Order.items'
+  relates_many :orders,       class_path: 'Order.items'
   relates_many :split_orders, class_path: 'SplitOrder.shipments.items'
 end
