@@ -1,4 +1,5 @@
 require "mongoid/relations/targets"
+require "mongoid/relatives/errors/invalid_relation_path"
 
 module Mongoid
   module Relatives
@@ -37,6 +38,12 @@ module Mongoid
 
               path.each do |relation_name|
                 meta = current_klass.relations[relation_name]
+                raise Mongoid::Relatives::Errors::InvalidRelationPath.new(
+                  metadata.inverse_class_name,
+                  metadata.name,
+                  meta.inverse_class_name,
+                  relation_name
+                ) unless meta.relation.embedded?
                 path_info << { macro: meta.macro, klass: current_klass, relation: relation_name}
                 current_klass = meta.klass
               end

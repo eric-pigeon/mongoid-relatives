@@ -1,0 +1,11 @@
+en:
+  mongoid:
+    errors:
+      messages:
+        invalid_relation_path:
+          message: "Invalid class_path for %{model} :%{relation}."
+          summary: "The %{invalid_model} relation :%{invalid_relation} is not
+            an embedded relation. Relatives doesn't support accessing docuemnts
+            through referenced relationships."
+          resolution: "Change your models so your class_path only contains
+            embedded relationships."

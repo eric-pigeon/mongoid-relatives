@@ -57,4 +57,45 @@ describe Mongoid::Relatives do
     expect(@shirt.split_orders[1].id).to eq(@split_order2.id)
   end
 
+  context "when trying to define class path with referential class path" do
+    class Band
+      include Mongoid::Document
+      include Mongoid::Relatives
+
+      has_many :albums
+    end
+
+    class Album
+      include Mongoid::Document
+      include Mongoid::Relatives
+
+      belongs_to :band
+      associates_to :studio
+    end
+
+    class Studio
+      include Mongoid::Document
+      include Mongoid::Relatives
+
+      relates_many :albums, class_path: "Band.albums"
+    end
+
+    let(:band) do
+      Band.new
+    end
+
+    let(:studio) do
+      Studio.new
+    end
+
+    let(:alubm) do
+      Album.new(band:band,studio:studio)
+    end
+
+    it "raises invalid path error" do
+      expect{studio.albums}.to raise_error(Mongoid::Relatives::Errors::InvalidRelationPath)
+    end
+
+  end
+
 end

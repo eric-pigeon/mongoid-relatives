@@ -11,6 +11,8 @@ require "mongoid/relatives/relations/accessors"
 require "mongoid/relatives/relations/macros"
 require "mongoid/relatives/relations/metadata"
 
+I18n.load_path << File.join(File.dirname(__FILE__), "config", "locales", "en.yml")
+
 module Mongoid
   module Relatives
     extend ActiveSupport::Concern
