@@ -1,7 +1,9 @@
-# Mongoid::relatives [![Build Status](https://travis-ci.org/xxxpigeonxxx/mongoid-relatives.svg?branch=master)](https://travis-ci.org/xxxpigeonxxx/mongoid-relatives) [![Code Climate](https://codeclimate.com/github/xxxpigeonxxx/mongoid-relatives/badges/gpa.svg)](https://codeclimate.com/github/xxxpigeonxxx/mongoid-relatives) [![Coverage Status](https://coveralls.io/repos/xxxpigeonxxx/mongoid-relatives/badge.svg)](https://coveralls.io/r/xxxpigeonxxx/mongoid-relatives)
+# Mongoid::Relatives
+[![Build Status](https://travis-ci.org/xxxpigeonxxx/mongoid-relatives.svg?branch=master)](https://travis-ci.org/xxxpigeonxxx/mongoid-relatives)
+[![Code Climate](https://codeclimate.com/github/xxxpigeonxxx/mongoid-relatives/badges/gpa.svg)](https://codeclimate.com/github/xxxpigeonxxx/mongoid-relatives)
+[![Coverage Status](https://coveralls.io/repos/xxxpigeonxxx/mongoid-relatives/badge.svg)](https://coveralls.io/r/xxxpigeonxxx/mongoid-relatives)
 
-TODO: Write a gem description
-
+Adds support for referrenced relations between documents where one of the documents is embedded
 ## Installation
 
 Add this line to your application's Gemfile:
