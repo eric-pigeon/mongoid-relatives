@@ -80,16 +80,8 @@ describe Mongoid::Relatives do
       relates_many :albums, class_path: "Band.albums"
     end
 
-    let(:band) do
-      Band.new
-    end
-
     let(:studio) do
       Studio.new
-    end
-
-    let(:alubm) do
-      Album.new(band:band,studio:studio)
     end
 
     it "raises invalid path error" do
