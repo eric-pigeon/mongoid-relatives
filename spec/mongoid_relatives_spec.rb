@@ -2,38 +2,44 @@ require "spec_helper"
 
 describe Mongoid::Relatives do
 
-  before(:each) do
-    @shirt = Product.create!(name:"t-shirt")
+  let(:shirt) do
+    Product.create!(name:"shirt")
+  end
 
-    @order1 = Order.create!(
-      items:[Order::Item.new(product:@shirt)]
+  let!(:order1) do
+    Order.create!(
+      items:[Order::Item.new(product:shirt)]
     )
+  end
 
-    @order2 = Order.create!(
-      items:[Order::Item.new(product:@shirt)]
+  let!(:order2) do
+    Order.create!(
+      items:[Order::Item.new(product:shirt)]
     )
+  end
 
-    @split_order = SplitOrder.new(shipments:[
+  let!(:split_order1) do
+    SplitOrder.create!(shipments:[
       SplitOrder::Shipment.new(items:[
-        product: @shirt
+        product: shirt
       ])
     ])
-    @split_order.save!
+  end
 
-    @split_order2 = SplitOrder.new(shipments:[
+  let!(:split_order2) do
+    SplitOrder.create!(shipments:[
       SplitOrder::Shipment.new(items:[
-        product: @shirt
+        product: shirt
       ])
     ])
-    @split_order2.save!
   end
 
   it "should define relation" do
-    expect(@shirt.relations).to have_key "orders"
+    expect(shirt.relations).to have_key "orders"
   end
 
   it "should define method" do
-    expect(@shirt.methods).to include :orders
+    expect(shirt.methods).to include :orders
   end
 
   it "should return the correct inverse" do
@@ -43,18 +49,18 @@ describe Mongoid::Relatives do
   end
 
   it "should return same object" do
-    expect(@shirt.orders.first.id).to eq(@order1.id)
-    expect(@shirt.orders[1].id).to eq(@order2.id)
+    expect(shirt.orders[0].id).to eq(order1.id)
+    expect(shirt.orders[1].id).to eq(order2.id)
   end
 
   it "should have the right count" do
-    expect(@shirt.orders.count).to eq(2)
-    expect(@shirt.split_orders.count).to eq(2)
+    expect(shirt.orders.count).to eq(2)
+    expect(shirt.split_orders.count).to eq(2)
   end
 
   it "should work with doubly nested documents" do
-    expect(@shirt.split_orders.first.id).to eq(@split_order.id)
-    expect(@shirt.split_orders[1].id).to eq(@split_order2.id)
+    expect(shirt.split_orders[0].id).to eq(split_order1.id)
+    expect(shirt.split_orders[1].id).to eq(split_order2.id)
   end
 
   context "when trying to define class path with referential class path" do
