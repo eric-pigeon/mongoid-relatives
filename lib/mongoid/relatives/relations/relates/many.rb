@@ -100,21 +100,21 @@ module Mongoid
 
             def relation_path_info(metadata)
               current_klass = metadata.klass
-              path_info     = []
 
-              metadata.class_path.each do |relation_name|
-                meta = current_klass.relations[relation_name]
+              metadata.class_path.map do |relation_name|
+                meta          = current_klass.relations[relation_name]
+                klass         = current_klass
+                current_klass = meta.klass
+
                 raise Mongoid::Relatives::Errors::InvalidRelationPath.new(
                   metadata.inverse_class_name,
                   metadata.name,
                   meta.inverse_class_name,
                   relation_name
                 ) unless meta.relation.embedded?
-                path_info << { macro: meta.macro, klass: current_klass, relation: relation_name}
-                current_klass = meta.klass
-              end
 
-              path_info
+                { macro: meta.macro, klass: klass, relation: relation_name}
+              end
             end
           end
         end
