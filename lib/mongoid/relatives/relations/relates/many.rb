@@ -34,25 +34,11 @@ module Mongoid
             # this function is doing WAY too much work need to
             # clean this up
             def criteria(metadata, object, type = nil)
-              path = metadata.class_path.split(".")
-              current_klass = metadata.klass
-              path_info = []
 
-              path.each do |relation_name|
-                meta = current_klass.relations[relation_name]
-                raise Mongoid::Relatives::Errors::InvalidRelationPath.new(
-                  metadata.inverse_class_name,
-                  metadata.name,
-                  meta.inverse_class_name,
-                  relation_name
-                ) unless meta.relation.embedded?
-                path_info << { macro: meta.macro, klass: current_klass, relation: relation_name}
-                current_klass = meta.klass
-              end
+              path_info = relation_path_info(metadata)
 
               initial = {key: [metadata.foreign_key], selector: object}
               path_info.drop(1).reverse_each do |info|
-
 
                 if info[:macro] == :embeds_one
                   initial[:key] = initial[:key].unshift(info[:relation])
@@ -73,14 +59,14 @@ module Mongoid
               end
 
               if path_info.first[:macro] == :embeds_one
-                initial[:key] = initial[:key].unshift( path.first )
+                initial[:key] = initial[:key].unshift( path_info.first[:relation] )
                 metadata.klass.where(initial[:key].join(".") => initial[:selector])
               else
 
                 if initial[:key].empty?
-                  metadata.klass.elem_match(path.first => initial[:selector])
+                  metadata.klass.elem_match(path_info.first[:relation] => initial[:selector])
                 else
-                  metadata.klass.elem_match(path.first => {initial[:key].join(".") => initial[:selector]})
+                  metadata.klass.elem_match(path_info.first[:relation] => {initial[:key].join(".") => initial[:selector]})
                 end
               end
 
@@ -108,6 +94,28 @@ module Mongoid
 
             def valid_options
               [:class_path]
+            end
+
+            private
+
+            def relation_path_info(metadata)
+              path          = metadata.class_path.split(".")
+              current_klass = metadata.klass
+              path_info     = []
+
+              path.each do |relation_name|
+                meta = current_klass.relations[relation_name]
+                raise Mongoid::Relatives::Errors::InvalidRelationPath.new(
+                  metadata.inverse_class_name,
+                  metadata.name,
+                  meta.inverse_class_name,
+                  relation_name
+                ) unless meta.relation.embedded?
+                path_info << { macro: meta.macro, klass: current_klass, relation: relation_name}
+                current_klass = meta.klass
+              end
+
+              path_info
             end
           end
         end
