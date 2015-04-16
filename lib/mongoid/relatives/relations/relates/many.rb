@@ -99,11 +99,10 @@ module Mongoid
             private
 
             def relation_path_info(metadata)
-              path          = metadata.class_path.split(".")
               current_klass = metadata.klass
               path_info     = []
 
-              path.each do |relation_name|
+              metadata.class_path.each do |relation_name|
                 meta = current_klass.relations[relation_name]
                 raise Mongoid::Relatives::Errors::InvalidRelationPath.new(
                   metadata.inverse_class_name,

@@ -15,9 +15,8 @@ module Mongoid
 
         def related_klass
           return inverse_klass if class_path.nil?
-          path = class_path.split(".")
           last = klass
-          path.each do |relation_name|
+          class_path.each do |relation_name|
             last = last.relations[relation_name].klass
           end
           last
@@ -45,7 +44,7 @@ module Mongoid
 %Q{#<Mongoid::Relatives::Relations::Metadata
   autobuild:    #{autobuilding?}
   class_name:   #{class_name}
-  class_path:   #{class_path}
+  class_path:   #{class_path.join(".")}
   cyclic:       #{cyclic.inspect}
   counter_cache:#{counter_cached?}
   dependent:    #{dependent.inspect}

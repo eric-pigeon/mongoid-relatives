@@ -1,6 +1,8 @@
 require "mongoid/relations/macros"
 require "mongoid/relatives/errors/missing_options"
 
+MissingOptions = Mongoid::Relatives::Errors::MissingOptions
+
 module Mongoid
   module Relatives
     module Relations
@@ -9,16 +11,15 @@ module Mongoid
 
         module ClassMethods
           def relates_many(name, options = {})
-            raise Mongoid::Relatives::Errors::MissingOptions.new(
+            raise MissingOptions.new(
               name.to_s,
               "class_path"
             ) if options[:class_path].nil?
-            #TODO move parsing to relation
+
             path = options[:class_path].split(".")
-            class_name = path.shift()
             options.merge!({
-              class_name: class_name,
-              class_path: path.join(".")
+              class_name: path.shift(),
+              class_path: path
             })
             meta = characterize(name, Relates::Many, options)
             relate_getter(name, meta)

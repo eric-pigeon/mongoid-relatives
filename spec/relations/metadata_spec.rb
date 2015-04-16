@@ -21,7 +21,7 @@ describe Mongoid::Relatives::Relations::Metadata do
       let(:metadata) do
         described_class.new(
           class_name: "Order",
-          class_path: "items",
+          class_path: ["items"],
           relation: Mongoid::Relatives::Relations::Relates::Many
         )
       end
