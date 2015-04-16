@@ -31,6 +31,8 @@ module Mongoid
               Builders::Relates::Many.new(base, meta, object || [])
             end
 
+            # this function is doing WAY too much work need to
+            # clean this up
             def criteria(metadata, object, type = nil)
               path = metadata.class_path.split(".")
               current_klass = metadata.klass
@@ -47,11 +49,41 @@ module Mongoid
                 path_info << { macro: meta.macro, klass: current_klass, relation: relation_name}
                 current_klass = meta.klass
               end
-              selector = path_info.drop(1).reverse_each.inject({metadata.foreign_key => object}) do |sel, info|
-                info[:klass].elem_match(info[:relation] => sel).selector
+
+              initial = {key: [metadata.foreign_key], selector: object}
+              path_info.drop(1).reverse_each do |info|
+
+
+                if info[:macro] == :embeds_one
+                  initial[:key] = initial[:key].unshift(info[:relation])
+                else
+                  if initial[:key].empty?
+
+                    initial[:selector] = info[:klass].elem_match(info[:relation] => initial[:selector]).selector
+
+                  else
+
+                    initial[:selector] = info[:klass].elem_match(
+                      info[:relation] => { initial[:key].join(".") => initial[:selector] }
+                    ).selector
+                  end
+
+                  initial[:key] = []
+                end
               end
 
-              metadata.klass.elem_match(path.first => selector)
+              if path_info.first[:macro] == :embeds_one
+                initial[:key] = initial[:key].unshift( path.first )
+                metadata.klass.where(initial[:key].join(".") => initial[:selector])
+              else
+
+                if initial[:key].empty?
+                  metadata.klass.elem_match(path.first => initial[:selector])
+                else
+                  metadata.klass.elem_match(path.first => {initial[:key].join(".") => initial[:selector]})
+                end
+              end
+
             end
 
             def embedded?

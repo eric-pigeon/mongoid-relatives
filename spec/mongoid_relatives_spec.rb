@@ -2,21 +2,11 @@ require "spec_helper"
 
 describe Mongoid::Relatives do
 
-  let(:shirt) do
-    Product.create!(name:"shirt")
-  end
+  let(:shirt) { Product.create!(name:"shirt") }
 
-  let!(:order1) do
-    Order.create!(
-      items:[Order::Item.new(product:shirt)]
-    )
-  end
+  let!(:order1) { Order.create!(items:[Order::Item.new(product:shirt)]) }
 
-  let!(:order2) do
-    Order.create!(
-      items:[Order::Item.new(product:shirt)]
-    )
-  end
+  let!(:order2) { Order.create!(items:[Order::Item.new(product:shirt)]) }
 
   let!(:split_order1) do
     SplitOrder.create!(shipments:[
@@ -32,14 +22,6 @@ describe Mongoid::Relatives do
         product: shirt
       ])
     ])
-  end
-
-  it "should define relation" do
-    expect(shirt.relations).to have_key "orders"
-  end
-
-  it "should define method" do
-    expect(shirt.methods).to include :orders
   end
 
   it "should return the correct inverse" do
@@ -61,6 +43,51 @@ describe Mongoid::Relatives do
   it "should work with doubly nested documents" do
     expect(shirt.split_orders[0].id).to eq(split_order1.id)
     expect(shirt.split_orders[1].id).to eq(split_order2.id)
+  end
+
+  context "when only using embeds_one" do
+    class Person
+      include Mongoid::Document
+
+      embeds_one :house
+    end
+
+    class House
+      include Mongoid::Document
+      include Mongoid::Relatives
+
+      embedded_in :person
+      associates_to :state
+    end
+
+    class State
+      include Mongoid::Document
+      include Mongoid::Relatives
+
+      relates_many :people, class_path: "Person.house"
+    end
+
+    let!(:state)  { State.create!() }
+    let!(:person1) { Person.create!(house:House.new(state:state)) }
+    let!(:person2) { Person.create!(house:House.new(state:state)) }
+
+    it "should return the same object" do
+      expect(state.people[0].id).to eq(person1.id)
+      expect(state.people[1].id).to eq(person2.id)
+    end
+
+  end
+
+  context "when using single embeds_many" do
+  end
+
+  context "when using embeds_one into embeds_many" do
+  end
+
+  context "when using embeds_many into embeds_one" do
+  end
+
+  context "when using embeds_many into embends_many" do
   end
 
   context "when trying to define class path with referential class path" do
