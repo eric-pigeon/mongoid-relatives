@@ -44,7 +44,7 @@ module Mongoid
 %Q{#<Mongoid::Relatives::Relations::Metadata
   autobuild:    #{autobuilding?}
   class_name:   #{class_name}
-  class_path:   #{class_path.join(".")}
+  class_path:   #{(class_path||[]).join(".")}
   cyclic:       #{cyclic.inspect}
   counter_cache:#{counter_cached?}
   dependent:    #{dependent.inspect}
