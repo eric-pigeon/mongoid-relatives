@@ -37,22 +37,20 @@ module Mongoid
 
               path_info = relation_path_info(metadata)
 
+
+              ##################################################################################
+
               initial = {key: [metadata.foreign_key], selector: object}
               path_info.drop(1).reverse_each do |info|
 
                 if info[:macro] == :embeds_one
                   initial[:key] = initial[:key].unshift(info[:relation])
                 else
-                  if initial[:key].empty?
+                  match_obj = initial[:key].empty? ?
+                    info[:selector] :
+                    { initial[:key].join(".") => initial[:selector] }
 
-                    initial[:selector] = info[:klass].elem_match(info[:relation] => initial[:selector]).selector
-
-                  else
-
-                    initial[:selector] = info[:klass].elem_match(
-                      info[:relation] => { initial[:key].join(".") => initial[:selector] }
-                    ).selector
-                  end
+                    initial[:selector] = info[:klass].elem_match(info[:relation] => match_obj).selector
 
                   initial[:key] = []
                 end
