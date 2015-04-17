@@ -23,19 +23,15 @@ module Mongoid
         end
 
         def inverse_relation_candidates
-          if class_path
-            related_klass.relations.values.select do |meta|
-              next if meta.name == name
+          relations = class_path ? related_klass.relations.values : relations_metadata
+
+          relations.select do |meta|
+            next if meta.name == name
+
+            if meta.class_path
+              (meta.related_klass == inverse_klass) && !meta.forced_nil_inverse?
+            else
               (meta.class_name == inverse_class_name) && !meta.forced_nil_inverse?
-            end
-          else
-            relations_metadata.select do |meta|
-              next if meta.name == name
-              if meta.class_path
-                (meta.related_klass == inverse_klass) && !meta.forced_nil_inverse?
-              else
-                (meta.class_name == inverse_class_name) && !meta.forced_nil_inverse?
-              end
             end
           end
         end
