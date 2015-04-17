@@ -37,16 +37,13 @@ module Mongoid
 
               path_info = relation_path_info(metadata)
 
-
-              ##################################################################################
-
               initial = {key: [metadata.foreign_key], selector: object}
               path_info.drop(1).reverse_each do |info|
 
                 if info[:macro] == :embeds_one
                   initial[:key] = initial[:key].unshift(info[:relation])
                 else
-                  match_obj = initial[:key].empty? ?
+                  match_obj = initial[:key].empty??
                     info[:selector] :
                     { initial[:key].join(".") => initial[:selector] }
 
@@ -60,14 +57,12 @@ module Mongoid
                 initial[:key] = initial[:key].unshift( path_info.first[:relation] )
                 metadata.klass.where(initial[:key].join(".") => initial[:selector])
               else
+                match_obj = initial[:key].empty??
+                  initial[:selector] :
+                  { initial[:key].join(".") => initial[:selector] }
 
-                if initial[:key].empty?
-                  metadata.klass.elem_match(path_info.first[:relation] => initial[:selector])
-                else
-                  metadata.klass.elem_match(path_info.first[:relation] => {initial[:key].join(".") => initial[:selector]})
-                end
+                metadata.klass.elem_match(path_info.first[:relation] => match_obj)
               end
-
             end
 
             def embedded?
