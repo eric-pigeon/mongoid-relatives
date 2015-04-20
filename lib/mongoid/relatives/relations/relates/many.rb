@@ -42,7 +42,7 @@ module Mongoid
               path_info.drop(1).reverse_each do |info|
 
                 if info[:macro] == :embeds_one
-                  initial[:key] = initial[:key].unshift(info[:relation])
+                  initial = embeds_one_criteria(initial, relation_info)
                 else
                   initial = embeds_many_criteria(initial, info)
                   initial[:selector] = initial[:selector].selector
@@ -50,7 +50,7 @@ module Mongoid
               end
 
               if path_info.first[:macro] == :embeds_one
-                initial[:key] = initial[:key].unshift( path_info.first[:relation] )
+                initial = embeds_one_criteria(initial, path_info.first)
                 metadata.klass.where(initial[:key].join(".") => initial[:selector])
               else
                 embeds_many_criteria(initial, path_info.first)[:selector]
@@ -111,6 +111,11 @@ module Mongoid
                 selector: relation_info[:klass].elem_match(relation_info[:relation] => match_obj),
                 key: []
               }
+            end
+
+            def embeds_one_criteria(partial, relation_info)
+              partial[:key] = partial[:key].unshift(relation_info[:relation])
+              return partial
             end
 
           end
