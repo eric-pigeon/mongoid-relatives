@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Mongoid::Relatives::VERSION
   spec.authors       = ["epigeon"]
   spec.email         = ["epigeon@weblinc.com"]
-  spec.summary       = %{Write a short summary. Required.}
-  spec.description   = %q{Write a longer description. Optional.}
+  spec.summary       = %{Additional referenced relations for Mongoid.}
+  spec.description   = %q{Referenced relations where one side is an embedded document.}
   spec.homepage      = ""
   spec.license       = "MIT"
 
