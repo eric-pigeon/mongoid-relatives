@@ -107,7 +107,7 @@ module Mongoid
                 partial[:selector] :
                 { partial[:key].join(".") => partial[:selector] }
 
-              return {
+              {
                 selector: relation_info[:klass].elem_match(relation_info[:relation] => match_obj),
                 key: []
               }
@@ -115,7 +115,7 @@ module Mongoid
 
             def embeds_one_criteria(partial, relation_info)
               partial[:key] = partial[:key].unshift(relation_info[:relation])
-              return partial
+              partial
             end
 
           end
