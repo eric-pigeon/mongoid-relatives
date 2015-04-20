@@ -38,18 +38,14 @@ module Mongoid
               path_info = relation_path_info(metadata)
 
               initial = {key: [metadata.foreign_key], selector: object}
+
               path_info.drop(1).reverse_each do |info|
 
                 if info[:macro] == :embeds_one
                   initial[:key] = initial[:key].unshift(info[:relation])
                 else
-                  match_obj = initial[:key].empty??
-                    info[:selector] :
-                    { initial[:key].join(".") => initial[:selector] }
-
-                    initial[:selector] = info[:klass].elem_match(info[:relation] => match_obj).selector
-
-                  initial[:key] = []
+                  initial = embeds_many_criteria(initial, info)
+                  initial[:selector] = initial[:selector].selector
                 end
               end
 
@@ -57,11 +53,7 @@ module Mongoid
                 initial[:key] = initial[:key].unshift( path_info.first[:relation] )
                 metadata.klass.where(initial[:key].join(".") => initial[:selector])
               else
-                match_obj = initial[:key].empty??
-                  initial[:selector] :
-                  { initial[:key].join(".") => initial[:selector] }
-
-                metadata.klass.elem_match(path_info.first[:relation] => match_obj)
+                embeds_many_criteria(initial, path_info.first)[:selector]
               end
             end
 
@@ -109,6 +101,18 @@ module Mongoid
                 { macro: meta.macro, klass: klass, relation: relation_name}
               end
             end
+
+            def embeds_many_criteria(partial, relation_info)
+              match_obj = partial[:key].empty??
+                partial[:selector] :
+                { partial[:key].join(".") => partial[:selector] }
+
+              return {
+                selector: relation_info[:klass].elem_match(relation_info[:relation] => match_obj),
+                key: []
+              }
+            end
+
           end
         end
       end
