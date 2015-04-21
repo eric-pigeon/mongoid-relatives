@@ -9,7 +9,7 @@ module Mongoid
             def build(type = nil)
               return object unless query?
               model = type ? type.constanttize : metadata.klass
-              metedata.criteria(object,model).first
+              metadata.criteria(object,model).first
             end
           end
         end
