@@ -27,6 +27,14 @@ module Mongoid
           end
 
           def associates_to(name, options = {})
+            if options[:class_path] != nil
+              path = options[:class_path].split(".")
+              options.merge!({
+                class_name: path.shift(),
+                class_path: path
+              })
+            end
+
             meta = characterize(name, Relates::In, options)
             relate(name, meta)
             reference(meta)
